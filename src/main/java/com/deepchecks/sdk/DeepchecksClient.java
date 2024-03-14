@@ -1,17 +1,22 @@
 package com.deepchecks.sdk;
 
+import com.deepchecks.json.JsonService;
 import com.deepchecks.request.RequestService;
+import com.deepchecks.sdk.types.DataRequest;
 import com.deepchecks.sdk.types.EnvType;
 import com.deepchecks.sdk.types.InteractionRequest;
 import com.deepchecks.sdk.types.LogInteractionType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.List;
 
 import static java.lang.String.format;
 
+@Builder(toBuilder = true, builderClassName = "DeepchecksClientInternalBuilder", builderMethodName = "internalBuilder")
+@AllArgsConstructor
 public class DeepchecksClient {
+    private static final String URL_PATTERN = "%s/%s";
     private static final String DEFAULT_HOST = "https://app.llm.deepchecks.com";
     private static final String API_VERSION = "api/v1";
     private static final String DEFAULT_VERSION = "0.0.1";
@@ -22,29 +27,55 @@ public class DeepchecksClient {
     private final String appName;
     private final String versionName;
     private final EnvType envType;
-    private Boolean autoCollect;
-    private Boolean silentMode;
 
     private RequestService requestService;
-    private ObjectMapper objectMapper;
-    public DeepchecksClient(String token, String appName, String versionName) {
-        this(DEFAULT_HOST, token, appName, versionName, DEFAULT_ENV_TYPE, true, true);
+    private JsonService jsonService;
+
+    void init() {
+        this.requestService = new RequestService(format(URL_PATTERN, host, API_VERSION), token);
+        this.jsonService = new JsonService();
     }
 
-    public DeepchecksClient(String host, String token, String appName, String versionName, EnvType envType, Boolean autoCollect, Boolean silentMode) {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder extends DeepchecksClientInternalBuilder {
+        Builder() {
+            super();
+        }
+
+        @Override
+        public DeepchecksClient build() {
+            DeepchecksClient foo = super.build();
+            foo.init();
+            return foo;
+        }
+    }
+
+    public DeepchecksClient(String token, String appName, String versionName) {
+        this(DEFAULT_HOST, token, appName, versionName, DEFAULT_ENV_TYPE);
+    }
+
+    public DeepchecksClient(String host, String token, String appName, String versionName, EnvType envType) {
         this.host = host;
         this.token = token;
         this.appName = appName;
         this.versionName = versionName;
         this.envType = envType;
-        this.autoCollect = autoCollect;
-        this.silentMode = silentMode;
-        this.requestService = new RequestService(format("%s/%s", host, API_VERSION), token);
-        this.objectMapper = new ObjectMapper();
+        this.requestService = new RequestService(format(URL_PATTERN, host, API_VERSION), token);
+        this.jsonService = new JsonService();
+        init();
     }
 
     public String logBatchInteractions(List<LogInteractionType> interactions) {
-        return requestService.post("interactions", toJson(interactions));
+        InteractionRequest interactionRequest = toInteractionRequest(interactions);
+        return requestService.post("interactions", jsonService.toJson(interactionRequest));
+    }
+
+    public String getData() {
+        DataRequest dataRequest = createDataRequest();
+        return requestService.post("interactions-download-all-by-filter", jsonService.toJson(dataRequest));
     }
 
     private InteractionRequest toInteractionRequest(List<LogInteractionType> interactions) {
@@ -56,15 +87,12 @@ public class DeepchecksClient {
                 .build();
     }
 
-    private String toJson(List<LogInteractionType> interactions) {
-        return toJson(toInteractionRequest(interactions));
-    }
-    private String toJson(InteractionRequest interactionRequest) {
-        try {
-            return objectMapper.writeValueAsString(interactionRequest);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error converting to json: ", e);
-        }
+    private DataRequest createDataRequest() {
+        return DataRequest.builder()
+                .applicationVersionId(versionName)
+                .environment(envType)
+                .build();
+
     }
 
 }

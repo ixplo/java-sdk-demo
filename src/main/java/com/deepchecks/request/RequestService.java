@@ -25,7 +25,6 @@ public class RequestService {
                 .addInterceptor(new DefaultHeaderInterceptor("Authorization", "Basic " + apiToken))
                 .addInterceptor(new DefaultHeaderInterceptor("x-deepchecks-origin", "SDK"))
                 .build();
-        ;
     }
 
     public String get(String endpoint) {

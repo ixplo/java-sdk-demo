@@ -1,12 +1,14 @@
 package com.deepchecks.sdk;
 
 import com.deepchecks.sdk.types.AnnotationType;
+import com.deepchecks.sdk.types.EnvType;
 import com.deepchecks.sdk.types.LogInteractionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DeepchecksClientIntegrationTest {
 
@@ -19,6 +21,40 @@ class DeepchecksClientIntegrationTest {
     @BeforeEach
     void setUp() {
         client = new DeepchecksClient(TEST_TOKEN, TEST_APP_NAME, TEST_VERSION_NAME);
+    }
+
+    @Test
+    void initClient() {
+        client = DeepchecksClient.builder()
+                .host("https://app.llm.deepchecks.com")
+                .token(TEST_TOKEN)
+                .appName("python-to-java")
+                .versionName("1")
+                .envType(EnvType.EVAL)
+                .build();
+        String interactions = client.getData();
+        assertNotNull(interactions);
+    }
+
+    @Test
+    void changeVersion() {
+        client = DeepchecksClient.builder()
+                .host("https://app.llm.deepchecks.com")
+                .token(TEST_TOKEN)
+                .appName("python-to-java")
+                .versionName("1")
+                .envType(EnvType.EVAL)
+                .build();
+        String interactions = client.getData();
+        assertNotNull(interactions);
+
+        client = client.toBuilder()
+                .appName("python-to-java")
+                .versionName("bad_version")
+                .envType(EnvType.PROD)
+                .build();
+        interactions = client.getData();
+        assertTrue(interactions.contains("application_version_id value is not a valid integer"));
     }
 
     @Test
