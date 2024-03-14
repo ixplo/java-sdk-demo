@@ -1,2 +1,4 @@
-package com.deepchecks.sdk.types;public class Step {
+package com.deepchecks.sdk.types;
+
+public class Step {
 }

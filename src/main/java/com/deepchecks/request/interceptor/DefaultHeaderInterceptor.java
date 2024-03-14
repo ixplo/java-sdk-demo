@@ -1,4 +1,4 @@
-package com.deepchecks.request;
+package com.deepchecks.request.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
