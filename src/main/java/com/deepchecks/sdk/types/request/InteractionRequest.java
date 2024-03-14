@@ -1,5 +1,7 @@
-package com.deepchecks.sdk.types;
+package com.deepchecks.sdk.types.request;
 
+import com.deepchecks.sdk.types.EnvType;
+import com.deepchecks.sdk.types.LogInteractionType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

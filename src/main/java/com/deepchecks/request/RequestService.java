@@ -32,7 +32,6 @@ public class RequestService {
                 .url(createUrl(endpoint))
                 .get()
                 .build();
-
         return execute(request);
     }
 
@@ -41,6 +40,15 @@ public class RequestService {
         Request request = new Request.Builder()
                 .url(createUrl(endpoint))
                 .post(requestBody)
+                .build();
+        return execute(request);
+    }
+
+    public String put(String endpoint, String body) {
+        RequestBody requestBody = RequestBody.create(body, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(createUrl(endpoint))
+                .put(requestBody)
                 .build();
         return execute(request);
     }

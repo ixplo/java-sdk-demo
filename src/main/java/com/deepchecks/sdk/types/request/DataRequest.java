@@ -1,5 +1,6 @@
-package com.deepchecks.sdk.types;
+package com.deepchecks.sdk.types.request;
 
+import com.deepchecks.sdk.types.EnvType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -16,7 +17,7 @@ public class DataRequest {
     @JsonProperty("environment")
     EnvType environment;
     @JsonProperty("start_time_epoch")
-    LocalDateTime startTimeEpoch;
+    Long startTimeEpoch;
     @JsonProperty("end_time_epoch")
-    LocalDateTime endTimeEpoch;
+    Long endTimeEpoch;
 }

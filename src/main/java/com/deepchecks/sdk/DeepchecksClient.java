@@ -2,16 +2,21 @@ package com.deepchecks.sdk;
 
 import com.deepchecks.json.JsonService;
 import com.deepchecks.request.RequestService;
-import com.deepchecks.sdk.types.DataRequest;
+import com.deepchecks.sdk.types.AnnotationType;
+import com.deepchecks.sdk.types.request.DataRequest;
 import com.deepchecks.sdk.types.EnvType;
-import com.deepchecks.sdk.types.InteractionRequest;
+import com.deepchecks.sdk.types.request.InteractionRequest;
 import com.deepchecks.sdk.types.LogInteractionType;
+import com.deepchecks.sdk.types.request.UpdateInteractionRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 
 @Builder(toBuilder = true, builderClassName = "DeepchecksClientInternalBuilder", builderMethodName = "internalBuilder")
 @AllArgsConstructor
@@ -24,9 +29,12 @@ public class DeepchecksClient {
 
     private final String host;
     private final String token;
-    private final String appName;
-    private final String versionName;
-    private final EnvType envType;
+    @Setter
+    private String appName;
+    @Setter
+    private String versionName;
+    @Setter
+    private EnvType envType;
 
     private RequestService requestService;
     private JsonService jsonService;
@@ -73,8 +81,21 @@ public class DeepchecksClient {
         return requestService.post("interactions", jsonService.toJson(interactionRequest));
     }
 
+    public String logInteraction(LogInteractionType interaction) {
+        InteractionRequest interactionRequest = toInteractionRequest(asList(interaction));
+        return requestService.post("interactions", jsonService.toJson(interactionRequest));
+    }
+
+    public String updateInteraction(String userInteractionId, String versionName, UpdateInteractionRequest request) {
+        return requestService.put(format("application_versions/%s/interactions/%s", versionName, userInteractionId), jsonService.toJson(request));
+    }
+
     public String getData() {
         DataRequest dataRequest = createDataRequest();
+        return getData(dataRequest);
+    }
+
+    public String getData(DataRequest dataRequest) {
         return requestService.post("interactions-download-all-by-filter", jsonService.toJson(dataRequest));
     }
 
