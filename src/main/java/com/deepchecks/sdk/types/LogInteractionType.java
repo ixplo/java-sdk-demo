@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static com.deepchecks.util.Const.DATE_TIME_PATTERN_LONG;
+import static com.deepchecks.util.Const.DATE_TIME_PATTERN;
 
 @Builder
 @Data
@@ -32,10 +32,10 @@ public class LogInteractionType {
     String rawJsonData;
     @JsonProperty("annotation_reason")
     String annotationReason;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN_LONG)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
     @JsonProperty("started_at")
     LocalDateTime startedAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN_LONG)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_PATTERN)
     @JsonProperty("finished_at")
     LocalDateTime finishedAt;
 }

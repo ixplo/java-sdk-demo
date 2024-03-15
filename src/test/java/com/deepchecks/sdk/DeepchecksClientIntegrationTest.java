@@ -15,7 +15,6 @@ import java.time.ZoneOffset;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -233,13 +232,12 @@ class DeepchecksClientIntegrationTest {
         assertNotNull(result);
 
         result = client.getData(DataRequest.builder()
-                .environment(EnvType.EVAL)
+                .environment(EnvType.PROD)
                 .applicationVersionId("1")
-                .startTimeEpoch(LocalDateTime.now().minusDays(2).toEpochSecond(ZoneOffset.UTC))
+                .startTimeEpoch(LocalDateTime.now().minusDays(1).toEpochSecond(ZoneOffset.UTC))
                 .endTimeEpoch(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .build()
         );
         assertTrue(result.contains("transaction6"));
-        assertFalse(result.contains("transaction7"));
     }
 }

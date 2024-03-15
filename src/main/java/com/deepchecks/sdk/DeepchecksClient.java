@@ -2,18 +2,16 @@ package com.deepchecks.sdk;
 
 import com.deepchecks.json.JsonService;
 import com.deepchecks.request.RequestService;
-import com.deepchecks.sdk.types.AnnotationType;
-import com.deepchecks.sdk.types.request.DataRequest;
 import com.deepchecks.sdk.types.EnvType;
-import com.deepchecks.sdk.types.request.InteractionRequest;
 import com.deepchecks.sdk.types.LogInteractionType;
+import com.deepchecks.sdk.types.request.DataRequest;
+import com.deepchecks.sdk.types.request.InteractionRequest;
 import com.deepchecks.sdk.types.request.UpdateInteractionRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
