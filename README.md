@@ -1,5 +1,9 @@
 ## Java SDK
 
+### Quickstart
+
+See example in [Quickstart.md](java-quickstart/Quickstart.md)
+
 ### Example of SDK usage
 
 Using constructor to init client:

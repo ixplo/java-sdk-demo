@@ -11,4 +11,12 @@ public enum AnnotationType {
     String getName() {
         return name().toLowerCase();
     }
+
+    public static AnnotationType of(String name) {
+        try {
+            return AnnotationType.valueOf(name.toUpperCase());
+        } catch (Exception e) {
+            return UNKNOWN;
+        }
+    }
 }
