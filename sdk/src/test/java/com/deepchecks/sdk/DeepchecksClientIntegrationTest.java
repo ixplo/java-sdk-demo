@@ -13,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -211,21 +213,24 @@ class DeepchecksClientIntegrationTest {
 
     @Test
     void getData() {
+        String recentInteractionId1 = UUID.randomUUID().toString();
+        String recentInteractionId2 = UUID.randomUUID().toString();
+
         client.setEnvType(EnvType.PROD);
         client.setVersionName("1");
         String result = client.logBatchInteractions(asList(
                 LogInteractionType.builder()
                         .input("my user input6")
                         .output("my model output6")
-                        .userInteractionId("transaction6")
-                        .startedAt(LocalDateTime.now())
+                        .userInteractionId(recentInteractionId1)
+                        .startedAt(LocalDateTime.now(ZoneOffset.UTC))
                         .annotation(AnnotationType.GOOD)
                         .build(),
                 LogInteractionType.builder()
                         .input("my user input7")
                         .output("my model output7")
-                        .userInteractionId("transaction7")
-                        .startedAt(LocalDateTime.now().minusDays(3))
+                        .userInteractionId(recentInteractionId2)
+                        .startedAt(LocalDateTime.now(ZoneOffset.UTC).minusDays(3))
                         .annotation(AnnotationType.BAD)
                         .build()
         ));
@@ -234,10 +239,10 @@ class DeepchecksClientIntegrationTest {
         result = client.getData(DataRequest.builder()
                 .environment(EnvType.PROD)
                 .applicationVersionId("1")
-                .startTimeEpoch(LocalDateTime.now().minusDays(1).toEpochSecond(ZoneOffset.UTC))
-                .endTimeEpoch(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .startTimeEpoch(LocalDateTime.now(ZoneOffset.UTC).minusMinutes(2).toEpochSecond(ZoneOffset.UTC))
                 .build()
         );
-        assertTrue(result.contains("transaction6"));
+        assertTrue(result.contains(recentInteractionId1));
+        assertTrue(result.contains(recentInteractionId2));
     }
 }
